@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #fafafa;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #214e34;
+  text-align: center;
+  margin-bottom: 50px;
+  letter-spacing: -0.5px;
+}
+
+/* Grid layout */
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  justify-items: center;
+  align-items: start;
+}
+
+/* Card styling */
+.teacher-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.teacher-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.teacher-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+/* Card text */
+.teacher-card-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.teacher-card h2 {
+  font-size: 1.4rem;
+  color: #214e34;
+  margin-bottom: 8px;
+}
+
+.teacher-card p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Form section */
+.form-section {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  max-width: 600px;
+  margin: 0 auto 80px;
+}
+
+.form-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  text-align: center;
+  color: #214e34;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #214e34;
+  font-size: 0.95rem;
+}
+
+input {
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 20px;
+}
+
+input:focus {
+  border-color: #497f5a;
+  box-shadow: 0 0 0 3px rgba(33, 78, 52, 0.15);
+  outline: none;
+}
+
+button {
+  padding: 14px;
+  background-color: #214e34;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2e5e42;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  .form-section {
+    padding: 30px;
+  }
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #214e34;
+  font-weight: 600;
+  transition: color 0.3s;
+  font-size: 1rem;
+}
+
+.nav-links a:hover {
+  color: #2e5e42;
+}
