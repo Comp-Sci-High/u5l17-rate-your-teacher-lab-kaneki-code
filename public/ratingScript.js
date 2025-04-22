@@ -1,21 +1,20 @@
-// Add an event listener to the form that upon submits creates a new rating
-// When the rating is created redirect to the ratings page
-const create = document.querySelector("form")
+const create = document.querySelector("form");
 
-create.addEventListener("submit", async(e)=>{
-    e.preventDefault()
-    const teacherData = new FormData(create)
-    const reqBody = object.formEntries(teacherData)
-    const response = await fetch ("/add/rating",{
+create.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const ratingData = new FormData(create);
+    const reqBody = Object.fromEntries(ratingData); // Corrected line
+
+    const response = await fetch("/add/rating", {
         method: "POST",
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+            "Content-Type": "application/json"
         },
-        body:json.stringify(reqBody)
-    })
-    const data = await response.json()
-    console.log(data)
-   
+        body: JSON.stringify(reqBody) // Corrected line
+    });
 
+    const data = await response.json();
+    console.log(data);
 
-})
+    window.location.href = "/ratings"; // Redirect to the ratings page
+});

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ratings</title>
   <!-- Link to the correct css file -->
-  <link rel="stylesheet" href="/public/ratings.css" />
+  <link rel="stylesheet" href="/ratings.css" />
   <!-- Link to the correct js file -->
-  <script src="/public/ratingScript.js" defer></script>
+  <script src="/ratingScript.js" defer></script>
 </head>
 <body>
   <nav class="navbar">
@@ -38,10 +38,11 @@
         <input type="text" name="teacher" />
     
         <label>comment: </label>
-        <input type="number" name="comment" />
+        <input type="text" name="comment" />
+
 
         <label>rating: </label>
-        <input type="number" name="rating" />
+        <input type="number" name="rating" min="1" max="5" />
     
         <button type="submit">Submit</button>
       </form>
