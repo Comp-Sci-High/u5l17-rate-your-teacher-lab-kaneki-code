@@ -1,18 +1,20 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const multer = require('multer');
-
 const app = express();
 
 // Database Connection
 mongoose.connect('mongodb+srv://SE12:CSH2025@cluster0.pqx7f.mongodb.net/CSHteachers?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true
-});
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
 
-// User Schema (updated - no unique username constraint)
+// Schemas
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
@@ -24,9 +26,6 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-const User = mongoose.model('User', userSchema);
-
-// Post Schema
 const postSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   content: { type: String, required: true },
@@ -39,6 +38,7 @@ const postSchema = new mongoose.Schema({
   }]
 });
 
+const User = mongoose.model('User', userSchema);
 const Post = mongoose.model('Post', postSchema);
 
 // Middleware
@@ -48,14 +48,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { secure: false }
 }));
 
-// Set view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Configure file uploads
+// Multer Configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, 'public', 'uploads'));
@@ -65,136 +62,174 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
+
+// View Engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Routes
-app.get('/', (req, res) => {
-  res.render('login');
-});
-
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-
-app.get('/signup', (req, res) => {
-  res.render('signup');
-});
-
-app.get('/createprofile', async (req, res) => {
-  if (!req.session.userId) return res.redirect('/login');
-  
-  const user = await User.findById(req.session.userId);
-  if (!user) {
-    req.session.destroy();
-    return res.redirect('/login');
-  }
-  res.render('createprofile', { user });
-});
-
-app.get('/social', async (req, res) => {
-  if (!req.session.userId) return res.redirect('/login');
-  
-  const [user, posts] = await Promise.all([
-    User.findById(req.session.userId),
-    Post.find().populate('userId', 'username profilePicture')
-      .populate('comments.userId', 'username profilePicture')
-      .sort({ createdAt: -1 })
-  ]);
-  
-  if (!user) {
-    req.session.destroy();
-    return res.redirect('/login');
-  }
-  res.render('social', { user, posts });
-});
-
-// Auth Endpoints
-app.post('/signup', async (req, res) => {
-  try {
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already exists" });
-    }
-
-    const user = new User({
-      email: req.body.email,
-      password: req.body.password
-    });
-
-    await user.save();
-    req.session.userId = user._id;
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: "Registration failed" });
-  }
-});
+// Auth Routes
+app.get('/', (req, res) => res.render('login'));
+app.get('/login', (req, res) => res.render('login'));
+app.get('/signup', (req, res) => res.render('login')); // Using same page with toggle
 
 app.post('/login', async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    
-    if (!user || user.password !== req.body.password) {
-      return res.status(400).json({ error: "Invalid credentials" });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid credentials' 
+      });
     }
 
     req.session.userId = user._id;
     res.json({ 
       success: true,
-      redirect: user.profileComplete ? "/social" : "/createprofile"
+      redirect: user.profileComplete ? '/social' : '/createprofile'
     });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error during login' 
+    });
   }
 });
 
-// Profile Endpoints
-app.post('/upload-profile-image', upload.single('profileImage'), async (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ error: "Not authenticated" });
-  }
-
+app.post('/signup', async (req, res) => {
   try {
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl;
+    const { email, password } = req.body;
     
-    await User.findByIdAndUpdate(req.session.userId, {
-      profilePicture: imagePath
-    });
+    if (await User.findOne({ email })) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email already in use' 
+      });
+    }
 
-    res.json({ success: true, imagePath });
+    const newUser = new User({ 
+      email, 
+      password,
+      username: email.split('@')[0] // Default username
+    });
+    await newUser.save();
+
+    req.session.userId = newUser._id;
+    res.json({ 
+      success: true,
+      redirect: '/createprofile'
+    });
   } catch (error) {
-    res.status(500).json({ error: "Failed to update profile image" });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error during signup' 
+    });
   }
 });
 
-app.post('/createprofile', async (req, res) => {
+// Profile Routes
+app.get('/createprofile', async (req, res) => {
+  if (!req.session.userId) return res.redirect('/login');
+  
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      req.session.destroy();
+      return res.redirect('/login');
+    }
+    res.render('createprofile', { user });
+  } catch (error) {
+    res.redirect('/login');
+  }
+});
+
+app.post('/createprofile', upload.single('profileImage'), async (req, res) => {
   if (!req.session.userId) {
-    return res.status(401).json({ error: "Not authenticated" });
+    return res.status(401).json({ 
+      success: false, 
+      error: "Session expired. Please login again." 
+    });
   }
 
   try {
     const { username, birthDate, bio } = req.body;
     
-    await User.findByIdAndUpdate(req.session.userId, {
+    if (!username || !birthDate) {
+      return res.status(400).json({
+        success: false,
+        error: "Username and birth date are required"
+      });
+    }
+
+    const updateData = {
       username,
       birthDate,
-      bio,
+      bio: bio || '',
       profileComplete: true
-    });
+    };
 
-    res.json({ success: true, redirect: "/social" });
+    // Handle profile picture
+    if (req.file) {
+      updateData.profilePicture = `/uploads/${req.file.filename}`;
+    } else if (req.body.profilePicture) {
+      updateData.profilePicture = req.body.profilePicture;
+    }
+
+    await User.findByIdAndUpdate(req.session.userId, updateData);
+    res.json({ success: true });
+
   } catch (error) {
-    res.status(500).json({ error: "Profile creation failed" });
+    console.error('Profile completion error:', error);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error. Please try again later."
+    });
   }
 });
 
-// Post Endpoints
+// Social Routes
+app.get('/social', async (req, res) => {
+  if (!req.session.userId) return res.redirect('/login');
+  
+  try {
+    const [user, posts] = await Promise.all([
+      User.findById(req.session.userId),
+      Post.find()
+        .populate('userId', 'username profilePicture')
+        .populate('comments.userId', 'username profilePicture')
+        .sort({ createdAt: -1 })
+    ]);
+
+    if (!user || !user.profileComplete) {
+      return res.redirect('/createprofile');
+    }
+
+    res.render('social', { user, posts });
+  } catch (error) {
+    res.redirect('/login');
+  }
+});
+
+// Post Routes
 app.post('/posts', async (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({ error: "Not authenticated" });
   }
 
   try {
-    // Delete existing post by this user if it exists
     await Post.deleteMany({ userId: req.session.userId });
     
     const post = new Post({
@@ -218,19 +253,33 @@ app.post('/posts/:postId/comments', async (req, res) => {
     const post = await Post.findById(req.params.postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const comment = {
+    post.comments.push({
       userId: req.session.userId,
       content: req.body.content
-    };
+    });
 
-    post.comments.push(comment);
     await post.save();
-    res.json({ success: true, comment });
+    res.json({ success: true, comment: post.comments[post.comments.length - 1] });
   } catch (error) {
     res.status(500).json({ error: "Failed to add comment" });
   }
 });
 
+// Logout
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) console.error('Logout error:', err);
+    res.redirect('/login');
+  });
+});
+
+// Error Handling
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render('error', { error: err.message });
+});
+
+// Server Start
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

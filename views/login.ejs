@@ -26,37 +26,39 @@
       <button class="toggle-btn" id="signup-toggle">Sign Up</button>
     </div>
 
-    <!-- Forms -->
+    <!-- Error Message -->
+    <div class="error-message" id="error-message"></div>
+
+    <!-- Login Form -->
     <form class="auth-form active" id="login-form">
       <div class="input-group">
-        <input type="email" id="login-email" required>
+        <input type="email" id="login-email" name="email" required>
         <label for="login-email">Email</label>
         <span class="underline"></span>
       </div>
       <div class="input-group">
-        <input type="password" id="login-password" required>
+        <input type="password" id="login-password" name="password" required>
         <label for="login-password">Password</label>
         <span class="underline"></span>
       </div>
       <button type="submit" class="submit-btn">Log In</button>
     </form>
 
+    <!-- Signup Form -->
     <form class="auth-form" id="signup-form">
       <div class="input-group">
-        <input type="email" id="signup-email" required>
+        <input type="email" id="signup-email" name="email" required>
         <label for="signup-email">Email</label>
         <span class="underline"></span>
       </div>
       <div class="input-group">
-        <input type="password" id="signup-password" required pattern="^(?=.*[A-Z])(?=.*\d).{6,}$">
+        <input type="password" id="signup-password" name="password" required>
         <label for="signup-password">Password</label>
         <span class="underline"></span>
         <small class="hint">6+ chars, 1 capital, 1 number</small>
       </div>
       <button type="submit" class="submit-btn">Sign Up</button>
     </form>
-
-    <div class="error-message" id="error-message"></div>
   </main>
 
   <script src="/js/login.js"></script>
