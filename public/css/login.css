@@ -1,0 +1,234 @@
+/* ===== RESET & BASE STYLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ===== ENHANCED NAVBAR ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px;
+  background: white;
+  border-bottom: 1px solid #e8e8e8;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  height: 65px;
+}
+
+.nav-logo {
+  height: 60px;
+  width: auto;
+  transition: transform 0.2s ease;
+  margin-left: 3%;
+}
+
+.nav-logo:hover {
+  transform: scale(1.05);
+}
+
+.nav-title {
+  color: #4CAF50;
+  font-size: 1.9rem;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  margin-right: 3%;
+  
+}
+
+/* ===== PROMINENT SCHOOL HEADER ===== */
+.school-header {
+  text-align: center;
+  margin-top: 110px;
+  margin-bottom: 40px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.school-header h1 {
+  color: #333;
+  font-size: 2.1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* ===== EXPANDED AUTH CONTAINER ===== */
+.auth-container {
+  max-width: 460px;
+  margin: 0 auto 50px;
+  padding: 32px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.09);
+  animation: slideUp 0.4s ease-out;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-container {
+  display: flex;
+  margin-bottom: 28px;
+  border-radius: 28px;
+  background: #f0f0f0;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.toggle-btn.active {
+  background: #4CAF50;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ===== ENLARGED FORM ELEMENTS ===== */
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: block;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 0;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 16px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-bottom-color: #4CAF50;
+}
+
+.input-group label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -14px;
+  font-size: 13px;
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+.submit-btn:hover {
+  background: #43A047;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #999;
+}
+
+.error-message {
+  margin-top: 20px;
+  padding: 14px;
+  background: #ffebee;
+  color: #d32f2f;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.92rem;
+  display: none;
+  animation: shake 0.5s;
+}
+
+.error-message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 500px) {
+  .navbar {
+    padding: 10px 20px;
+    height: 60px;
+  }
+  
+  .nav-title {
+    font-size: 1.7rem;
+  }
+  
+  .school-header {
+    margin-top: 90px;
+  }
+  
+  .auth-container {
+    padding: 28px 22px;
+    margin: 0 18px 40px;
+    border-radius: 12px;
+  }
+}

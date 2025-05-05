@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/createprofile.css">
+</head>
+<body>
+    <div class="container">
+        <div class="image-section">
+            <div class="profile-image-container" id="profileImageContainer">
+                <img id="profileImagePreview" class="profile-image" 
+                     src="<%= user.profilePicture || '/images/default-profile.png' %>" 
+                     alt="Profile Preview">
+            </div>
+            <input type="file" id="fileUpload" accept="image/*" style="display: none;">
+            <button id="uploadButton" class="upload-btn">Upload Photo</button>
+        </div>
+        
+        <div class="form-section">
+            <h1 class="section-title">Complete Your Profile</h1>
+            
+            <form id="profileForm" action="/createprofile" method="POST">
+                <input type="hidden" name="email" value="<%= user.email %>">
+                <input type="hidden" id="profilePicture" name="profilePicture" value="<%= user.profilePicture || '' %>">
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required 
+                           value="<%= user.username || '' %>" autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthDate">Birth Date</label>
+                    <input type="month" id="birthDate" name="birthDate" 
+                           value="<%= user.birthDate || '' %>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bio">Bio (Optional)</label>
+                    <textarea id="bio" name="bio"><%= user.bio || '' %></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Complete Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/createprofile.js"></script>
+</body>
+</html>

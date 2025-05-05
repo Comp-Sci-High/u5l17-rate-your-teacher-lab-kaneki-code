@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Just Vibe | Login</title>
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <img src="/images/compsci.png" class="nav-logo" alt="Just Vibe Logo">
+    <div class="nav-title">Just Vibe</div>
+  </nav>
+
+  <!-- School Header -->
+  <header class="school-header">
+    <h1>Compsci High</h1>
+  </header>
+
+  <!-- Auth Container -->
+  <main class="auth-container">
+    <!-- Toggle Switch -->
+    <div class="toggle-container">
+      <button class="toggle-btn active" id="login-toggle">Login</button>
+      <button class="toggle-btn" id="signup-toggle">Sign Up</button>
+    </div>
+
+    <!-- Forms -->
+    <form class="auth-form active" id="login-form">
+      <div class="input-group">
+        <input type="email" id="login-email" required>
+        <label for="login-email">Email</label>
+        <span class="underline"></span>
+      </div>
+      <div class="input-group">
+        <input type="password" id="login-password" required>
+        <label for="login-password">Password</label>
+        <span class="underline"></span>
+      </div>
+      <button type="submit" class="submit-btn">Log In</button>
+    </form>
+
+    <form class="auth-form" id="signup-form">
+      <div class="input-group">
+        <input type="email" id="signup-email" required>
+        <label for="signup-email">Email</label>
+        <span class="underline"></span>
+      </div>
+      <div class="input-group">
+        <input type="password" id="signup-password" required pattern="^(?=.*[A-Z])(?=.*\d).{6,}$">
+        <label for="signup-password">Password</label>
+        <span class="underline"></span>
+        <small class="hint">6+ chars, 1 capital, 1 number</small>
+      </div>
+      <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+
+    <div class="error-message" id="error-message"></div>
+  </main>
+
+  <script src="/js/login.js"></script>
+</body>
+</html>
